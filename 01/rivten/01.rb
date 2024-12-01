@@ -9,11 +9,11 @@ end
 # Part 1
 lefts = lefts.sort
 rights = rights.sort
-p lefts.zip(rights).map{|x| (x[0] - x[1]).abs}.sum
+p lefts.zip(rights).sum{(_1 - _2).abs}
 
 # Part 2
 def similarity_score x, rights
-  rights.filter {|y| y == x}.length
+  x * rights.filter{|y| y == x}.length
 end
 
-p lefts.map{|x| x * similarity_score(x, rights)}.sum
+p lefts.sum{similarity_score(_1, rights)}
