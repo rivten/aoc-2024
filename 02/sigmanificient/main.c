@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../01/sigmanificient/helpers.h"
+#include "helpers.h"
 
 #define ENOUGH_FOR_INPUT 8
 
