@@ -1,7 +1,8 @@
+#!/usr/bin/env -S nix eval -f
 let
   nixpkgs-tarball = rev:
     fetchTarball "https://github.com/NixOS/nixpkgs/tarball/${rev}";
-  pkgs = import (nixpkgs-tarball  "nixos-24.11") { };
+  pkgs = import (nixpkgs-tarball "nixos-24.11") { };
 
   inherit (pkgs.lib) strings lists trivial attrsets;
   inherit (builtins) readFile map mapAttrs filter length;
@@ -11,11 +12,11 @@ in let
   split = sep: lst: filter (e: e != "") (strings.splitString sep lst);
 
   # accumulate the result of a function on every element on a list
-  accMap = op: lst: lists.foldl (x: y: x + (op y)) 0 lst;
+  accMap = op: lists.foldl (x: y: x + (op y)) 0;
 
   # merge a list of attrset:
   # [ {a = 1; b = 1; } { b = 1; } ] => { a = [ 1 2 ]; b = [ 1 ]}
-  mergeAttrs = attrs: lists.foldl (a: b: trivial.mergeAttrs a b) {} attrs;
+  mergeAttrs = lists.foldl (a: b: trivial.mergeAttrs a b) {};
 
 in let
   lines = strings.splitString "\n" (readFile ./input);
@@ -27,7 +28,7 @@ in let
       (split " " line);
 
   cols = mapAttrs
-    (k: v: lists.sort (a: b: a < b) v)
+    (k: lists.sort (a: b: a < b))
     (attrsets.zipAttrs (map mergeAttrs (map identifyColumns lines)));
 
 in {
