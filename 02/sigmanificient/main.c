@@ -7,6 +7,7 @@
 
 #define ENOUGH_FOR_INPUT 8
 
+static
 size_t parse_report_values(char *line, int *nums)
 {
     size_t count = 0;
@@ -19,6 +20,7 @@ size_t parse_report_values(char *line, int *nums)
     return count;
 }
 
+static
 bool is_safe_report(int const *nums, size_t length)
 {
     bool negative = false;
@@ -38,6 +40,7 @@ bool is_safe_report(int const *nums, size_t length)
     return true;
 }
 
+static
 bool is_safe_report_tolerance(int const *nums, size_t len)
 {
     int copy[ENOUGH_FOR_INPUT];

@@ -1,4 +1,4 @@
-OUT := day$(lastword $(subst /, ,$(dir $(PWD))))
+OUT ?= day$(lastword $(subst /, ,$(dir $(PWD))))
 / := ../../01/sigmanificient/common/
 
 CFLAGS += -std=c99 -pedantic -D_POSIX_SOURCE
@@ -7,7 +7,7 @@ CFLAGS += -O2
 
 CFLAGS += @$/base_warnings
 
-$(OUT): $(shell find . -type f -name "*.c") $/read_file.c
+$(OUT): $(shell find . -maxdepth 1 -type f -name "*.c") $/read_file.c
 	$(CC) -o $@ $(CFLAGS) $^ $(LDFLAGS) $(LDLIBS)
 
 fclean:
@@ -16,4 +16,8 @@ fclean:
 .NOTPARALLEL: re
 re: fclean $(OUT)
 
-.PHONY: fclean re
+
+install: $(OUT)
+	install -Dm755 -t $(PREFIX)/bin $(OUT)
+
+.PHONY: fclean re install
