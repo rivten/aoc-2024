@@ -1,27 +1,58 @@
-private const val Needle = "XMAS"
+private fun List<String>.matchPattern1(row: Int, col: Int): Boolean {
+    // M.M
+    // .A.
+    // S.S
+    return this[row - 1][col - 1] == 'M'
+            && this[row - 1][col + 1] == 'M'
+            && this[row + 1][col - 1] == 'S'
+            && this[row + 1][col + 1] == 'S'
+}
+
+private fun List<String>.matchPattern2(row: Int, col: Int): Boolean {
+    // M.S
+    // .A.
+    // M.S
+    return this[row - 1][col - 1] == 'M'
+            && this[row + 1][col - 1] == 'M'
+            && this[row - 1][col + 1] == 'S'
+            && this[row + 1][col + 1] == 'S'
+}
+
+private fun List<String>.matchPattern3(row: Int, col: Int): Boolean {
+    // S.M
+    // .A.
+    // S.M
+    return this[row - 1][col + 1] == 'M'
+            && this[row + 1][col + 1] == 'M'
+            && this[row - 1][col - 1] == 'S'
+            && this[row + 1][col - 1] == 'S'
+}
+
+private fun List<String>.matchPattern4(row: Int, col: Int): Boolean {
+    // S.S
+    // .A.
+    // M.M
+    return this[row + 1][col - 1] == 'M'
+            && this[row + 1][col + 1] == 'M'
+            && this[row - 1][col - 1] == 'S'
+            && this[row - 1][col + 1] == 'S'
+}
 
 fun main() {
     val board = readInput("Day4")
 
     var sum = 0
-    for (row in 0 until board.size) {
-        for (col in 0 until board[row].length) {
-            for (dirRow in -1..1) {
-                for (dirCol in -1..1) {
-                    if (dirCol == 0 && dirRow == 0) {
-                        continue
-                    }
-                    var valid = true
-                    for (index in Needle.indices) {
-                        val boardChar = board.getOrNull(row + index * dirRow)?.getOrNull(col + index * dirCol)
-                        if (boardChar != Needle[index]) {
-                            valid = false
-                            break
-                        }
-                    }
-                    if (valid) {
-                        sum++
-                    }
+    for (row in 1 until board.size - 1) {
+        for (col in 1 until board[row].length - 1) {
+            if (board[row][col] == 'A') {
+                // Can probably be replaced by another smart loop… but time again :D
+                if (
+                    board.matchPattern1(row, col)
+                    || board.matchPattern2(row, col)
+                    || board.matchPattern3(row, col)
+                    || board.matchPattern4(row, col)
+                ) {
+                    sum++
                 }
             }
         }
