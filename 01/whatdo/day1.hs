@@ -16,7 +16,7 @@ part1 :: ([Int], [Int]) -> Int
 part1 (a, b) = sum $ map abs (zipWith (-) (sort a) (sort b))
 
 part2 :: ([Int], [Int]) -> Int
-part2 (left, right) = foldl (\acc x -> acc + x * (length (filter (\xs -> x == xs) right))) 0 left
+part2 (left, right) = sum $ map (\x -> x * (length $ filter (\xs -> x == xs) right)) left
 
 split :: [Int] -> ([Int], [Int])
 split [] = ([], [])
