@@ -4,9 +4,9 @@ fun main() {
     var sum = 0UL
     for (line in lines) {
         for (index in line.indices) {
-            if (line.isDont(index)) { // Do first to not match "do"
+            if (line.startsWith("don't", index)) { // Do first to not match "do"
                 enabled = false
-            } else if (line.isDo(index)) {
+            } else if (line.startsWith("do", index)) {
                 enabled = true
             } else if (enabled) {
                 sum += line.isMul(index)
@@ -18,12 +18,7 @@ fun main() {
 
 private val REGEX = Regex("""^(\d{1,3}),(\d{1,3})\)""")
 private fun String.isMul(startIndex: Int): ULong {
-    val isOpening = startIndex + 3 < length
-            && this[startIndex] == 'm'
-            && this[startIndex + 1] == 'u'
-            && this[startIndex + 2] == 'l'
-            && this[startIndex + 3] == '('
-    if (!isOpening) {
+    if (!startsWith("mul(", startIndex)) {
         return 0UL
     }
 
@@ -35,19 +30,4 @@ private fun String.isMul(startIndex: Int): ULong {
         }
 
     return mult ?: 0UL
-}
-
-private fun String.isDont(startIndex: Int): Boolean {
-    return startIndex + 4 < length
-            && this[startIndex] == 'd'
-            && this[startIndex + 1] == 'o'
-            && this[startIndex + 2] == 'n'
-            && this[startIndex + 3] == '\''
-            && this[startIndex + 4] == 't'
-}
-
-private fun String.isDo(startIndex: Int): Boolean {
-    return startIndex + 1 < length
-            && this[startIndex] == 'd'
-            && this[startIndex + 1] == 'o'
 }
