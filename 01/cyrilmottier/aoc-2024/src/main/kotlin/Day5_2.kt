@@ -28,12 +28,10 @@ fun main() {
         }
         .map { update ->
             update.sortedWith { left, right ->
-                if (suffixRules[left]?.contains(right) == true) {
-                    -1
-                } else if (prefixRules[left]?.contains(right) == true) {
-                    1
-                } else {
-                    0
+                when {
+                    suffixRules[left]?.contains(right) == true -> -1
+                    prefixRules[left]?.contains(right) == true -> 1
+                    else -> 0
                 }
             }
         }
