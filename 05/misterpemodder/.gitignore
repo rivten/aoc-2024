@@ -1,0 +1,6 @@
+.aoc/
+.direnv/
+.zig-cache/
+zig-out/
+*.o
+day*-solution
