@@ -31,7 +31,7 @@ def possible_solve_rec? target, elems, current_val
 end
 
 def possible_solve? eq
-  possible_solve_rec? eq[0], eq[1], 0
+  possible_solve_rec? eq[0], eq[1][1...], eq[1][0] 
 end
 
 p equations
