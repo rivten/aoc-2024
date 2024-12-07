@@ -6,8 +6,9 @@ main = do
   contents <- readFile "day2.txt"
   let reports = map (map readInt) . map words . lines $ contents 
       safe = part1 reports
+      safeDampener = part2 reports
       in
-      print safe
+      print safeDampener
       
   
 part1 :: [[Int]] -> Int
@@ -32,17 +33,21 @@ isOnlyAscendingOrDescendingWithMaxStep :: [Int] -> Bool
 isOnlyAscendingOrDescendingWithMaxStep [] = True
 isOnlyAscendingOrDescendingWithMaxStep x = (allSame . map direction . pairwise $ x) && (all isSmallStep . pairwise $ x)
 
+isOnlyAscendingOrDescendingWithMaxStepWith1ErrorMax :: [Int] -> Bool
+isOnlyAscendingOrDescendingWithMaxStepWith1ErrorMax x = any isOnlyAscendingOrDescendingWithMaxStep $ map removeElement $ zip (iterate (+1) 0) (replicate (length x) x)
+
+removeElement :: (Int, [a]) -> [a]
+removeElement (idx, l) 
+  | idx < 0 = l 
+  | otherwise = splitL ++ (drop 1 splitR)
+  where 
+    (splitL, splitR) = splitAt idx l
+
 isSmallStep :: (Int, Int) -> Bool
 isSmallStep (x, y) = let diff = abs (x - y) in diff >= 1 && diff <= 3
 
-part2 :: ([Int], [Int]) -> Int
-part2 (left, right) = sum $ map (\x -> x * (length $ filter (\xs -> x == xs) right)) left
-
-split :: [Int] -> ([Int], [Int])
-split [] = ([], [])
-split (a:b:xs) = let (ax, bx) = split xs in (a:ax, b:bx)
-
-
+part2 :: [[Int]] -> Int
+part2 = length . filter isOnlyAscendingOrDescendingWithMaxStepWith1ErrorMax
 
 readInt :: String -> Int
 readInt = read
