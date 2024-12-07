@@ -13,6 +13,9 @@ fun main() {
             val possibilities = 3.0.pow(operationCount).toInt()
             (0..<possibilities).any { operations ->
                 expected == operands.reduceIndexed { index, acc, operand ->
+                    // NOTE Cyril
+                    // Could break when acc > expected because all operations are forcing acc to
+                    // monotonically increase.
                     val operation = (operations / (3.0.pow(index - 1).toInt())) % 3
                     when (operation) {
                         0 -> acc + operand
