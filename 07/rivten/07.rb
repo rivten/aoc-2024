@@ -11,29 +11,29 @@ def concat x, y
   (x.to_s + y.to_s).to_i
 end
 
-def possible_solve_rec target, elems, solution_count, current_val
+def possible_solve_rec? target, elems, solution_count, current_val
   if elems.length == 0 then
     if current_val == target then
-      return solution_count + 1
+      return true
     else
-      return solution_count
+      return false
     end
   end
 
   if current_val > target then
     # main optim
     # it works because all operations strictly increase the value
-    return solution_count
+    return false
   end
 
   x = elems[0]
-  solution_count = possible_solve_rec(target, elems[1...], solution_count, current_val + x)
-  solution_count = possible_solve_rec(target, elems[1...], solution_count, current_val * x)
-  possible_solve_rec(target, elems[1...], solution_count, concat(current_val, x))
+  possible_solve_rec?(target, elems[1...], solution_count, current_val + x) || possible_solve_rec?(target, elems[1...], solution_count, current_val * x) || possible_solve_rec?(target, elems[1...], solution_count, concat(current_val, x))
 end
 
-def possible_solve eq
-  possible_solve_rec eq[0], eq[1], 0, 0
+def possible_solve? eq
+  possible_solve_rec? eq[0], eq[1], 0, 0
 end
 
-p equations.filter{|eq| possible_solve(eq) > 0}.sum{|eq| eq[0]}
+p equations
+  .filter{|eq| possible_solve?(eq)}
+  .sum{|eq| eq[0]}
