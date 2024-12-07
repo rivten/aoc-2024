@@ -11,7 +11,7 @@ def concat x, y
   (x.to_s + y.to_s).to_i
 end
 
-def possible_solve_rec? target, elems, solution_count, current_val
+def possible_solve_rec? target, elems, current_val
   if elems.length == 0 then
     if current_val == target then
       return true
@@ -27,11 +27,11 @@ def possible_solve_rec? target, elems, solution_count, current_val
   end
 
   x = elems[0]
-  possible_solve_rec?(target, elems[1...], solution_count, current_val + x) || possible_solve_rec?(target, elems[1...], solution_count, current_val * x) || possible_solve_rec?(target, elems[1...], solution_count, concat(current_val, x))
+  possible_solve_rec?(target, elems[1...], current_val + x) || possible_solve_rec?(target, elems[1...], current_val * x) || possible_solve_rec?(target, elems[1...], concat(current_val, x))
 end
 
 def possible_solve? eq
-  possible_solve_rec? eq[0], eq[1], 0, 0
+  possible_solve_rec? eq[0], eq[1], 0
 end
 
 p equations
