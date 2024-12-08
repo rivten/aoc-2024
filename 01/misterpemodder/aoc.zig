@@ -27,18 +27,21 @@ const AocRunConfig = struct {
     year_field: []const u8 = "AOC_YEAR",
     day_field: []const u8 = "AOC_DAY",
     data_type: []const u8 = "AocData",
+    result_type: []const u8 = "AocResult",
     setup_fn: []const u8 = "aocSetup",
     part1_fn: []const u8 = "aocPart1",
     part2_fn: []const u8 = "aocPart2",
 };
 
-pub fn AocSetupFn(DataType: type) type {
-    return fn (Allocator, []const u8) anyerror!DataType;
+pub fn AocSetupFn(comptime AocData: type) type {
+    return fn (Allocator, []const u8) anyerror!AocData;
 }
 
-pub fn AocSolutionFn(DataType: type) type {
-    return fn (Allocator, DataType) anyerror!u32;
+pub fn AocSolutionFn(comptime AocData: type, comptime AocResult: type) type {
+    return fn (Allocator, AocData) anyerror!AocResult;
 }
+
+pub const AocDefaultResult = u32;
 
 pub fn run(comptime config: AocRunConfig) void {
     const root = @import("root");
@@ -46,7 +49,7 @@ pub fn run(comptime config: AocRunConfig) void {
     checkRunConfig(config, root);
     const year: u32 = @field(root, config.year_field);
     const day: u32 = @field(root, config.day_field);
-    const DataType: type = @field(root, config.data_type);
+    const AocData: type = @field(root, config.data_type);
 
     aoc_log.info("== Running Advent of Code {d} - Day {d} ==", .{ year, day });
 
@@ -62,13 +65,14 @@ pub fn run(comptime config: AocRunConfig) void {
         return;
     };
 
-    const setup_fn = getDeclOptional(AocSetupFn(DataType), root, config.setup_fn);
-    const part1_fn = getDeclOptional(AocSolutionFn(DataType), root, config.part1_fn);
-    const part2_fn = getDeclOptional(AocSolutionFn(DataType), root, config.part2_fn);
+    const AocResult = getDeclOptional(type, root, config.result_type) orelse AocDefaultResult;
+    const setup_fn = getDeclOptional(AocSetupFn(AocData), root, config.setup_fn);
+    const part1_fn = getDeclOptional(AocSolutionFn(AocData, AocResult), root, config.part1_fn);
+    const part2_fn = getDeclOptional(AocSolutionFn(AocData, AocResult), root, config.part2_fn);
 
-    const setup_data: DataType = runSetupFunction(DataType, setup_fn, allocator, input.items) catch return;
-    runSolutionFunction(DataType, part1_fn, 1, allocator, setup_data) catch {};
-    runSolutionFunction(DataType, part2_fn, 2, allocator, setup_data) catch {};
+    const setup_data: AocData = runSetupFunction(AocData, setup_fn, allocator, input.items) catch return;
+    runSolutionFunction(AocData, AocResult, part1_fn, 1, allocator, setup_data) catch {};
+    runSolutionFunction(AocData, AocResult, part2_fn, 2, allocator, setup_data) catch {};
 }
 
 fn checkRunConfig(comptime config: AocRunConfig, comptime root: anytype) void {
@@ -90,7 +94,7 @@ fn getDeclOptional(comptime ty: type, comptime root: anytype, comptime name: []c
     return null;
 }
 
-fn runSetupFunction(comptime DataType: type, setup_fn: ?AocSetupFn(DataType), allocator: Allocator, input: []const u8) !DataType {
+fn runSetupFunction(comptime AocData: type, setup_fn: ?AocSetupFn(AocData), allocator: Allocator, input: []const u8) !AocData {
     if (setup_fn) |f| {
         aoc_log.info("Running setup function", .{});
 
@@ -101,7 +105,7 @@ fn runSetupFunction(comptime DataType: type, setup_fn: ?AocSetupFn(DataType), al
         };
         aoc_log.info("Setup function completed in {}µs", .{readTimeUs(&timer)});
         return result;
-    } else if (DataType == []const u8) {
+    } else if (AocData == []const u8) {
         aoc_log.info("No setup to perform", .{});
         return input;
     } else {
@@ -109,7 +113,7 @@ fn runSetupFunction(comptime DataType: type, setup_fn: ?AocSetupFn(DataType), al
     }
 }
 
-fn runSolutionFunction(comptime DataType: type, solution_fn: ?AocSolutionFn(DataType), part: u32, allocator: Allocator, data: DataType) !void {
+fn runSolutionFunction(comptime AocData: type, comptime AocResult: type, solution_fn: ?AocSolutionFn(AocData, AocResult), part: u32, allocator: Allocator, data: AocData) !void {
     if (solution_fn) |f| {
         aoc_log.info("Running part {d}", .{part});
 
