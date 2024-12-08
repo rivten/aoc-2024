@@ -8,14 +8,10 @@ height = content.length
 height.times do |y|
   width.times do |x|
     if content[y][x] != "." then
+      # a position is a complex number x + yi
       antennas[content[y][x]] << x + y * 1i
     end
   end
-end
-
-def get_antinodes a0, a1
-  d = a1 - a0
-  [a0 + 2 * d, a1 - 2 * d]
 end
 
 def in_range? antinode, width, height
@@ -28,9 +24,17 @@ antinodes = Set.new
 
 antennas.each do |a, positions|
   positions.combination(2).each do |a0, a1|
-    anti0, anti1 = get_antinodes a0, a1
-    antinodes.add anti0 if in_range? anti0, width, height
-    antinodes.add anti1 if in_range? anti1, width, height
+    d = a1 - a0
+    k = 0
+    while in_range? (a0 + k * d), width, height do
+      antinodes.add (a0 + k * d)
+      k += 1
+    end
+    k = -1
+    while in_range? (a0 + k * d), width, height do
+      antinodes.add (a0 + k * d)
+      k -= 1
+    end
   end
 end
 
