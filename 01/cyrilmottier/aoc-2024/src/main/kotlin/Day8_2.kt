@@ -24,13 +24,13 @@ fun main() {
                 val otherCoord = coords[otherIndex]
                 val dr = coord.row - otherCoord.row
                 val dc = coord.col - otherCoord.col
-                val first = Coord(coord.row + dr, coord.col + dc)
-                if (isInBoard(first)) {
-                    antinodes.add(first)
-                }
-                val second = Coord(otherCoord.row - dr, otherCoord.col - dc)
-                if (isInBoard(second)) {
-                    antinodes.add(second)
+
+                for (i in -1..1 step 2) {
+                    var currentCoord = coord
+                    do {
+                        antinodes.add(currentCoord)
+                        currentCoord = Coord(currentCoord.row + i * dr, currentCoord.col + i * dc)
+                    } while (isInBoard(currentCoord))
                 }
             }
         }
