@@ -46,7 +46,7 @@ end
 
 def perimeter region
   region.sum do |p|
-    DIRS.sum {|d| region.include?(p + d) ? 0 : 1}
+    DIRS.count {|d| !region.include?(p + d)}
   end
 end
 
